@@ -12,7 +12,7 @@ def hello():
 
 @app.route('/getTopHolders/<tokenName>')
 def getTopHolder(tokenName):
-    d = webdriver.Chrome()
+    d = webdriver.Chrome("chromedriver")
     d.get('https://coinmarketcap.com/currencies/'+tokenName+'/holders/')
     holders = d.find_elements_by_css_selector("table tbody tr")
     topHolders = []
