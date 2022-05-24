@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as soup
 from flask import Flask
 import json
+import chromedriver_binary
 app = Flask(__name__)
 
 
@@ -20,7 +21,7 @@ def getTopHolder(tokenName):
     options.add_argument("enable-automation")
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-dev-shm-usage")
-    d = webdriver.Chrome(executable_path="./chromedriver", options=options)
+    d = webdriver.Chrome(options=options)
     d.get('https://coinmarketcap.com/currencies/'+tokenName+'/holders/')
     holders = d.find_elements_by_css_selector("table tbody tr")
     topHolders = []
