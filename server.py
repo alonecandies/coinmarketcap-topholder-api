@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as soup
 from flask import Flask
 import json
@@ -12,14 +13,23 @@ def hello():
 
 @app.route('/getTopHolders/<tokenName>')
 def getTopHolder(tokenName):
-    d = webdriver.Chrome("chromedriver")
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("enable-automation")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-dev-shm-usage")
+    d = webdriver.Chrome(executable_path="chromedriver", options=options)
     d.get('https://coinmarketcap.com/currencies/'+tokenName+'/holders/')
     holders = d.find_elements_by_css_selector("table tbody tr")
     topHolders = []
     for holder in holders:
         rank = holder.find_element_by_css_selector("td:nth-child(1)").text
-        address = holder.find_element_by_css_selector("td:nth-child(2)").text
-        amount = holder.find_element_by_css_selector("td:nth-child(3)").text
+        address = holder.find_element_by_css_selector(
+            "td:nth-child(2)").text
+        amount = holder.find_element_by_css_selector(
+            "td:nth-child(3)").text
         percentage = holder.find_element_by_css_selector(
             "td:nth-child(4)").text
         topHolders.append({"rank": rank, "address": address,
