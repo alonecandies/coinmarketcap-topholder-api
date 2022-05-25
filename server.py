@@ -23,18 +23,23 @@ def getTopHolder(tokenName):
     options.add_argument("--disable-dev-shm-usage")
     d = webdriver.Chrome(options=options)
     d.get('https://coinmarketcap.com/currencies/'+tokenName+'/holders/')
+    price = d.find_element_by_css_selector(".priceValue span").text
     holders = d.find_elements_by_css_selector("table tbody tr")
     topHolders = []
     for holder in holders:
         rank = holder.find_element_by_css_selector("td:nth-child(1)").text
         address = holder.find_element_by_css_selector(
-            "td:nth-child(2)").text
-        amount = holder.find_element_by_css_selector(
+            "td:nth-child(5)").text
+        quantity = holder.find_element_by_css_selector(
             "td:nth-child(3)").text
         percentage = holder.find_element_by_css_selector(
             "td:nth-child(4)").text
+        value = float(quantity.replace(",", "")) * \
+            float(price.replace(",", "").replace("$", ""))
+        value = int(value)
+        value = f'{value:,}'
         topHolders.append({"rank": rank, "address": address,
-                          "amount": amount, "percentage": percentage})
+                          "quantity": quantity, "percentage": percentage, "value": "$"+value})
     return json.dumps(topHolders, separators=(',', ':'))
 
 
